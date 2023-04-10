@@ -2,32 +2,44 @@ var express = require('express');
 var router = express.Router();
 var jwt = require('jsonwebtoken')
 
+var { getUserInfo } = require('../model/user/index')
+
 // 登录
-router.post('/login', function(req, res, next) {
+router.post('/login', async function(req, res, next) {
   const { username, password } = req.body
-  if (username === 'yuzhe' && password === '666666yry') {
+  let userInfo = await getUserInfo({  username })
+  if (userInfo) {
     var token = jwt.sign({ username }, 'sharedkey', { algorithm: 'HS256' })
     res.send({
       code: 200,
       data: {
         token,
-        nickname: '愚者',
-        portrait: 'https://p3-passport.byteimg.com/img/user-avatar/e73713ffe8002ab9958732cdd3df17af~180x180.awebp'
-      }
+       ...userInfo
+      },
+      success: true
     });
+  } else {
+    res.send({
+      code: 501,
+      message: '用户不存在',
+      success: false
+    })
   }
 });
 
 // 获取用户信息
-router.get('/get', function (req, res, next) {
+router.get('/get', async function (req, res, next) {
   // 从token中拿到用户名信息
   let { username } = req.auth
+  let userInfo = await getUserInfo({  username })
+  let data = {
+    nickname: userInfo.nickname,
+    portrait: userInfo.avatar
+  }
   res.send({
     code: 200,
-    data: {
-      nickname: '愚者',
-      portrait: 'https://p3-passport.byteimg.com/img/user-avatar/e73713ffe8002ab9958732cdd3df17af~180x180.awebp'
-    }
+    data,
+    success: true
   })
 })
 
