@@ -17,6 +17,7 @@ async function getArticleComment (articleId) {
         nickname: userInfo.nickname,
         content: articleComments[i].content,
         accordContent: null,
+        portrait: userInfo.avatar,
         children: []
       }
       commentList.push(comment)
@@ -35,6 +36,7 @@ async function getArticleComment (articleId) {
         parentId: parentId,
         nickname: userInfo.nickname,
         content: articleComments[j].content,
+        portrait: userInfo.avatar,
         children: null
       }
       if (accordId) {

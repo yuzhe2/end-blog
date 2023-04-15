@@ -7,14 +7,18 @@ var { getUserInfo } = require('../model/user/index')
 // 登录
 router.post('/login', async function(req, res, next) {
   const { username, password } = req.body
-  let userInfo = await getUserInfo({  username })
+  let userInfo = await getUserInfo({  username, password })
   if (userInfo) {
     var token = jwt.sign({ username }, 'sharedkey', { algorithm: 'HS256' })
+    let userData = {
+      nickname: userInfo.nickname,
+      portrait: userInfo.avatar
+    }
     res.send({
       code: 200,
       data: {
         token,
-       ...userInfo
+       ...userData
       },
       success: true
     });
